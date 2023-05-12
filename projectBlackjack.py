@@ -9,7 +9,7 @@ logo = """
       |  \/ K|                            _/ |                
       `------'                           |__/           
 """   
-cards= [1,2,3,4,5,6,7,8,9,10,10,10,10,11]  #Cards in a deck
+cards= 4*[2,3,4,5,6,7,8,9,10,10,10,10,11]  #Cards in a deck
 dealerHand = []  #Dealer's hand
 playerHand = []  #Player's hand
 
@@ -35,24 +35,25 @@ def checkBlackjack():
                 print("Blackjack! You win!")
                 return True
         elif 11 in dealerHand and 10 in dealerHand: #Dealer blackjack
-                print("Dealer has blackjack! You lose!")
+                print("Dealer has blackjack! Dealer wins!")
                 return True 
         else:
                 return False  #No blackjack, continue game
 
 def checkBust():
         if sum(playerHand) > 21:  #Normal bust
-                print("Bust! You lose!")
+                print("Bust! Dealer wins!")
                 return True
+                
         else:
                 return False  #No bust, continue game
 
-def checkWin():
+def checkWin(playerBust):
         if sum(dealerHand) > 21: #Dealer bust
                 return True
-        elif sum(dealerHand) > sum(playerHand):  #Dealer win
+        elif sum(dealerHand) > sum(playerHand) and not playerBust:  #Dealer win
                 return False
-        elif sum(dealerHand) < sum(playerHand):  #Player win
+        elif sum(dealerHand) < sum(playerHand) or playerBust:  #Player win
                 return True
         else:  #Tie
                 return False
@@ -72,16 +73,16 @@ def ace():
                                 print("Invalid input. Please enter 'y' or 'n'.")
 
 
-
-
 def play():
         dealHands() #Deal hands
         showHand() #Show hands
+        playerBust = False 
 # Player's turn
         while True:
                 if checkBlackjack():  #Check for blackjack
                         break
                 elif checkBust():  #Check for bust
+                        playerBust = True
                         break
                 else:
                         print("Do you want to hit or stand? (h/s)") # Hit or stand
@@ -101,11 +102,16 @@ def play():
 
 # Show dealer's hand and determine winner
         print(f"Dealer's cards: {dealerHand}, current score: {sum(dealerHand)}")
-        if checkWin():  #Check for win
-                print("You win!")
+        if checkWin(playerBust):  #Check for win
+                if playerBust:
+                        print("You both busted! You lose!")
+                else:
+                        print("You win!")
         else:
-                print("You lose!")
-
+                if playerBust:
+                        print("You both busted! You lose!")
+                else:
+                        print("Dealer wins!")
 
 startgame() #Start game
 play() #Play game
